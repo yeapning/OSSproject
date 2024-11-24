@@ -39,6 +39,7 @@ class Block(Basic):
         pass
 
 
+
 class Paddle(Basic):
     def __init__(self):
         super().__init__(config.paddle_color, 0, config.paddle_pos, config.paddle_size)
@@ -66,9 +67,33 @@ class Ball(Basic):
         pygame.draw.ellipse(surface, self.color, self.rect)
 
     def collide_block(self, blocks: list):
-        # ============================================
+        # ============================================ ㄴ
         # TODO: Implement an event when the ball hits a block
         pass
+        index = pygame.Rect.collidelist(self.rect,[Block.rect for Block in blocks])
+        if(index >= 0):
+            blocks[index].collide()
+            self.Change_direct(blocks[index])
+
+
+    def Change_direct(self, obj: Basic):
+        tan = obj.rect.height/obj.rect.width
+        deg = math.degrees(tan)
+        #deg 1사분면, 180-deg 2사분면, 180+deg 3사분면, 360 -deg 4사분면
+        if(deg <= self.dir and self.dir < 180-deg): # 밑에서 닿음
+            print("아")
+            self.dir = 360 - self.dir
+        elif(180 - deg <= self.dir and self.dir < 180+deg): #왼쪽에서 닿음
+            print("왼")
+            self.dir = 180 - self.dir if self.dir >= 180 else 360 - (self.dir - 180)
+        elif(180 + deg <= self.dir and self.dir < 360-deg): #윗쪽에서 닿음
+            print("위")
+            self.dir = 360 - self.dir
+        else: #오른쪽에서 닿음
+            print("오")
+            self.dir = 180 - self.dir if self.dir >= 180 else 360 - (self.dir - 180)
+            
+
 
     def collide_paddle(self, paddle: Paddle) -> None:
         if self.rect.colliderect(paddle.rect):
