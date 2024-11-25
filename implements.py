@@ -77,36 +77,66 @@ class Ball(Basic):
 
 
     def Change_direct(self, obj: Basic):
-        tan = obj.rect.height/obj.rect.width
-        deg = math.degrees(tan)
-        #deg 1사분면, 180-deg 2사분면, 180+deg 3사분면, 360 -deg 4사분면
-        if(deg <= self.dir and self.dir < 180-deg): # 밑에서 닿음
-            print("아")
-            self.dir = 360 - self.dir
-        elif(180 - deg <= self.dir and self.dir < 180+deg): #왼쪽에서 닿음
-            print("왼")
-            self.dir = 180 - self.dir if self.dir >= 180 else 360 - (self.dir - 180)
-        elif(180 + deg <= self.dir and self.dir < 360-deg): #윗쪽에서 닿음
-            print("위")
-            self.dir = 360 - self.dir
-        else: #오른쪽에서 닿음
-            print("오")
-            self.dir = 180 - self.dir if self.dir >= 180 else 360 - (self.dir - 180)
-            
+        rect_sum_x = self.rect.width + obj.rect.width
+        rect_sum_y = self.rect.height + obj.rect.height
+
+        gap_x = self.rect.centerx - obj.rect.centerx
+        gap_y = self.rect.centery - obj.rect.centery
+        
+
+        overX = gap_x - (2*(gap_x > 0)-1) * rect_sum_x
+        overY = gap_y - (2*(gap_y > 0)-1) * rect_sum_y
+        #x 양수면 왼쪽에서 부딪힌거 y 양수면 위에서 부딪힌거
+        #과잉: 두개가 맞닿았을때, 겹쳐진 부분의 길이.
+        if(abs(overX) >= abs(overY)):#수평 충돌체와 충돌
+            if(self.rect.centery > obj.rect.centery): #아래로 튐
+                self.down_bound()
+                print("하",self.dir)
+            else:                         #위로 튐
+                self.up_bound()
+                print("상",self.dir)
+        else:#수직 충돌체와 충돌
+            if(self.rect.centerx < obj.rect.centerx): #오른쪽으로 튐
+                self.left_bound()
+                print("좌",self.dir)
+            else:                         #왼쪽로 튐
+                self.right_bound()
+                print("우",self.dir)
 
 
     def collide_paddle(self, paddle: Paddle) -> None:
         if self.rect.colliderect(paddle.rect):
-            self.dir = 360 - self.dir + random.randint(-5, 5)
+            self.Change_direct(paddle)
 
     def hit_wall(self):
-        # ============================================
-        # TODO: Implement a service that bounces off when the ball hits the wall
         pass
-        # 좌우 벽 충돌
-        
-        # 상단 벽 충돌
+        if (self.rect.centerx + self.rect.width > config.display_dimension[0] or self.rect.centerx < 0):
+            self.dir = 360 - (self.dir - 180)
+            self.dir = self.dir%360
+        if (self.rect.centery < 0):
+            self.dir = 360 - self.dir
+
+    def up_bound(self): 
+        if 180 <= self.dir and self.dir < 360: #위에서 아래로
+            self.dir = 360 - self.dir
     
+    def down_bound(self): 
+        if 0 <= self.dir and self.dir < 180: #위에서 아래로
+            self.dir = 360 - self.dir
+        self.dir = self.dir%360
+
+    def left_bound(self):
+        if 270 <= self.dir and self.dir < 360: #위에서 아래로
+            self.dir = 360 - (self.dir - 180)
+        elif 0 <= self.dir and self.dir < 90:
+            self.dir = 180 - self.dir
+        self.dir = self.dir%360
+
+    def right_bound(self):
+        if 90 <= self.dir and self.dir < 270: #위에서 아래로
+            self.dir = 360 - (self.dir - 180)
+        self.dir = self.dir%360
+
     def alive(self):
         # ============================================
         # TODO: Implement a service that returns whether the ball is alive or not
