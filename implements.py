@@ -34,9 +34,8 @@ class Block(Basic):
         pygame.draw.rect(surface, self.color, self.rect)
     
     def collide(self):
-        # ============================================
-        # TODO: Implement an event when block collides with a ball
-        pass
+        self.alive = False
+        self.rect.centerx = -1000
 
 
 
@@ -67,9 +66,6 @@ class Ball(Basic):
         pygame.draw.ellipse(surface, self.color, self.rect)
 
     def collide_block(self, blocks: list):
-        # ============================================ ㄴ
-        # TODO: Implement an event when the ball hits a block
-        pass
         index = pygame.Rect.collidelist(self.rect,[Block.rect for Block in blocks])
         if(index >= 0):
             blocks[index].collide()
@@ -91,17 +87,13 @@ class Ball(Basic):
         if(abs(overX) >= abs(overY)):#수평 충돌체와 충돌
             if(self.rect.centery > obj.rect.centery): #아래로 튐
                 self.down_bound()
-                print("하",self.dir)
             else:                         #위로 튐
                 self.up_bound()
-                print("상",self.dir)
         else:#수직 충돌체와 충돌
             if(self.rect.centerx < obj.rect.centerx): #오른쪽으로 튐
                 self.left_bound()
-                print("좌",self.dir)
             else:                         #왼쪽로 튐
                 self.right_bound()
-                print("우",self.dir)
 
 
     def collide_paddle(self, paddle: Paddle) -> None:
