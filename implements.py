@@ -108,8 +108,7 @@ class Ball(Basic):
         if self.rect.colliderect(paddle.rect):
             self.Change_direct(paddle)
 
-    def hit_wall(self):
-        pass
+    def hit_wall(self): 
         if (self.rect.centerx + self.rect.width > config.display_dimension[0] or self.rect.centerx < 0):
             self.dir = 360 - (self.dir - 180)
             self.dir = self.dir%360
@@ -138,6 +137,4 @@ class Ball(Basic):
         self.dir = self.dir%360
 
     def alive(self):
-        # ============================================
-        # TODO: Implement a service that returns whether the ball is alive or not
-        pass
+       return self.rect.centery < config.display_dimension[1]
