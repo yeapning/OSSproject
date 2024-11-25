@@ -7,6 +7,11 @@ import config
 import pygame
 from pygame.locals import Rect, K_LEFT, K_RIGHT
 
+# 구조상으로 run.py를 수정하지 않고 점수를 구현하는것은 장담하건데, 불가능합니다.
+# run.py에 Block.alive = False 인지 확인하고 삭제하는 로직이 없기 때문입니다.
+
+# 혹시 가능하신 방법을 알고 계신다면 알려주실수 있겠습니까? 발표당시에 어떻게 구현하셨는지 모르겠습니다.
+
 
 class Basic:
     def __init__(self, color: tuple, speed: int = 0, pos: tuple = (0, 0), size: tuple = (0, 0)):
@@ -36,7 +41,6 @@ class Block(Basic):
     def collide(self):
         self.alive = False
         self.rect.centerx = -1000
-
 
 
 class Paddle(Basic):
@@ -72,7 +76,7 @@ class Ball(Basic):
             self.Change_direct(blocks[index])
 
 
-    def Change_direct(self, obj: Basic):
+    def Change_direct(self, obj: Basic, spread = 0):
         rect_sum_x = self.rect.width + obj.rect.width
         rect_sum_y = self.rect.height + obj.rect.height
 
@@ -94,11 +98,12 @@ class Ball(Basic):
                 self.left_bound()
             else:                         #왼쪽로 튐
                 self.right_bound()
+        self.dir += random.randint(-spread,spread)
 
 
     def collide_paddle(self, paddle: Paddle) -> None:
         if self.rect.colliderect(paddle.rect):
-            self.Change_direct(paddle)
+            self.Change_direct(paddle,5)
 
     def hit_wall(self): 
         if (self.rect.centerx + self.rect.width > config.display_dimension[0] or self.rect.centerx < 0):
