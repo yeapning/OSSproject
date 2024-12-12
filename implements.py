@@ -7,11 +7,6 @@ import config
 import pygame
 from pygame.locals import Rect, K_LEFT, K_RIGHT
 
-# 구조상으로 run.py를 수정하지 않고 점수를 구현하는것은 장담하건데, 불가능합니다.
-# run.py에 Block.alive = False 인지 확인하고 삭제하는 로직이 없기 때문입니다.
-
-# 혹시 가능하신 방법을 알고 계신다면 알려주실수 있겠습니까? 발표당시에 어떻게 구현하셨는지 모르겠습니다.
-
 
 class Basic:
     def __init__(self, color: tuple, speed: int = 0, pos: tuple = (0, 0), size: tuple = (0, 0)):
@@ -74,6 +69,7 @@ class Ball(Basic):
         if(index >= 0):
             blocks[index].collide()
             self.Change_direct(blocks[index])
+            blocks.remove(blocks[index]) #blocks 리스트에서 부딪힌 블록 삭제
 
 
     def Change_direct(self, obj: Basic, spread = 0):
