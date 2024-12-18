@@ -33,9 +33,14 @@ class Block(Basic):
     def draw(self, surface) -> None:
         pygame.draw.rect(surface, self.color, self.rect)
     
-    def collide(self):
+    def collide(self,ITEMS):
         self.alive = False
+        center_x, center_y = self.rect.centerx, self.rect.centery  # 블록 중앙 좌표 저장
         self.rect.centerx = -1000
+        new_item = spawn_item(center_x, center_y) 
+        if new_item:
+            ITEMS.append(new_item)
+            #ITEMS.append(new_item)를 위해 매개변수로 ITEMS 추가
 
 
 class Paddle(Basic):
@@ -64,10 +69,10 @@ class Ball(Basic):
     def draw(self, surface):
         pygame.draw.ellipse(surface, self.color, self.rect)
 
-    def collide_block(self, blocks: list):
+    def collide_block(self, blocks: list, items:list):
         index = pygame.Rect.collidelist(self.rect,[Block.rect for Block in blocks])
         if(index >= 0):
-            blocks[index].collide()
+            blocks[index].collide(items)
             self.Change_direct(blocks[index])
             blocks.remove(blocks[index]) #blocks 리스트에서 부딪힌 블록 삭제
 
@@ -132,25 +137,36 @@ class Ball(Basic):
     def alive(self):
        return self.rect.centery < config.display_dimension[1]
 
+
 class Item(Basic): # 아이템 객체 - Basic을 상속 받음
     def __init__(self, color:tuple, pos:tuple):
         super().__init__(color, speed=5, pos=pos, size=config.item_size)
         # 기본 낙하 속도 설정  
         self.active = True
 
-    def draw(self, surface):
+    def draw(self, surface): #아이템을 창에 띄움
         if self.active:
             pygame.draw.ellipse(surface, self.color, self.rect)
 
-    def move(self):
+    def move(self): # 아이템 이동 
         if self.active:
-            self.rect.move_ip(0, self.speed)  # 아래로 이동
+            self.rect.move_ip(0, self.speed)  # 아래로 떨어지도록
             self.center = (self.rect.centerx, self.rect.centery)
 
-    def collide_paddle(self, paddle):
+    def collide_paddle(self, paddle): # paddle과 충돌했을 때
         if self.active and self.rect.colliderect(paddle.rect):
             self.active = False
             self.activate_item()
 
-    def activate_item(self):
+    def activate_item(self): # 아이템 활성화 (paddle과 충돌 시)
         pass  
+
+
+def spawn_item(center_x, center_y): # 아이템 생성
+    if random.random() < 0.2: # 20%의 확률로 아이템 생성
+        item_color = (255, 255, 255)
+        item = Item(color=item_color,pos=(center_x, center_y)) # 중앙에서 생성성
+        print("아이템 생성")
+        return item
+
+            
