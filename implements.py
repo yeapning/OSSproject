@@ -131,3 +131,26 @@ class Ball(Basic):
 
     def alive(self):
        return self.rect.centery < config.display_dimension[1]
+
+    def Item(Basic): # 아이템 객체 - Basic을 상속 받음
+        def __init__(self, color:tuple, pos:tuple):
+            super().__init__(color, speed=5, pos=pos, size=config.item_size)
+            # 기본 낙하 속도 설정  
+            self.active = True
+
+        def draw(self, surface):
+            if self.active:
+                pygame.draw.ellipse(surface, self.color, self.rect)
+
+        def move(self):
+            if self.active:
+                self.rect.move_ip(0, self.speed)  # 아래로 이동
+                self.center = (self.rect.centerx, self.rect.centery)
+
+        def collide_paddle(self, paddle):
+            if self.active and self.rect.colliderect(paddle.rect):
+                self.active = False
+                self.activate_item()
+
+        def activate_item(self):
+            pass  
