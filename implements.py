@@ -36,7 +36,6 @@ class Block(Basic):
     def collide(self,ITEMS):
         self.alive = False
         center_x, center_y = self.rect.centerx, self.rect.centery  # 블록 중앙 좌표 저장
-        self.rect.centerx = -1000
         new_item = spawn_item(center_x, center_y) 
         if new_item:
             ITEMS.append(new_item)
@@ -139,8 +138,9 @@ class Ball(Basic):
 
 
 class Item(Basic): # 아이템 객체 - Basic을 상속 받음
-    def __init__(self, color:tuple, pos:tuple):
-        super().__init__(color, speed=5, pos=pos, size=config.item_size)
+    def __init__(self, pos:tuple):
+        self.color = config.game_item_color[2] # 기본 색 - 하얀색
+        super().__init__(color=self.color, speed=5, pos=pos, size=config.item_size)
         # 기본 낙하 속도 설정  
         self.active = True
 
@@ -164,8 +164,8 @@ class Item(Basic): # 아이템 객체 - Basic을 상속 받음
 
 def spawn_item(center_x, center_y): # 아이템 생성
     if random.random() < 0.2: # 20%의 확률로 아이템 생성
-        item_color = (255, 255, 255)
-        item = Item(color=item_color,pos=(center_x, center_y)) # 중앙에서 생성성
+        # 기본 아이템(하얀색,효과x) 생성
+        item = Item(pos=(center_x, center_y)) # 중앙에서 생성
         print("아이템 생성")
         return item
 

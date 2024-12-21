@@ -113,6 +113,7 @@ def main():
         surface.blit(life_font, config.life_pos)
 
         if len(BALLS) == 0:
+            ITEMS = []
             if life > 1:
                 life -= 1
                 ball1 = Ball()
@@ -121,6 +122,7 @@ def main():
             else:
                 surface.blit(mess_over, (200, 300))
         elif all(block.alive == False for block in BLOCKS):
+            ITEMS = []
             surface.blit(mess_clear, (200, 400))
         else:
             for ball in BALLS:
