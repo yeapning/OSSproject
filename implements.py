@@ -158,7 +158,7 @@ class Item(Basic): # 아이템 객체 - Basic을 상속 받음
             self.active = False 
             self.activate_item(paddle, BALLS) # 아이템 활성화
 
-    def activate_item(self): # 아이템 활성화 (paddle과 충돌 시)
+    def activate_item(self): # 아이템 활성화(paddle과 충돌 시)
         pass  
 
 class RedBall(Item): # Item을 상속 받은 빨간 공 아이템 class
@@ -167,9 +167,9 @@ class RedBall(Item): # Item을 상속 받은 빨간 공 아이템 class
         self.color = config.game_item_red  # 아이템 색 - 빨간색
 
     def activate_item(self, paddle : Paddle, BALLS):  # activate_item 오버라이딩
-        # 빨간색 공 아이템 효과 - 패들에서 새로운 공 발사
+        # 빨간색 공 아이템 효과 - 패들에서 공 한 개 추가 발사사
         new_ball = Ball(pos=(paddle.rect.centerx, paddle.rect.top))  # 패들 위치에서 공 생성
-        BALLS.append(new_ball)  # BALLS 리스트에 추가
+        BALLS.append(new_ball)  # BALLS 리스트에 공 한 개 더 추가
 
 
 def spawn_item(center_x, center_y, paddle : Paddle, BALLS): # 아이템 생성
