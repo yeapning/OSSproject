@@ -70,10 +70,10 @@ def tick():
             BALLS.remove(ball)
     
     for item in ITEMS:
-        if item.active:  # 아이템이 활성화된 상태에서만 이동 및 충돌 처리
-            item.move()
-            item.collide_paddle(paddle, BALLS)
-        if not item.active: # active 상태가 아닌 item이면
+        if item.active: # active 상태라면
+            item.move() 
+            item.collide_paddle(paddle, BALLS) 
+        if not item.active: # active 상태가 아니라면면
             ITEMS.remove(item) # ITEMS 리스트에서 제거
         if item.rect.top > config.display_dimension[1]: # 아이템이 화면 아래로 나가면
             ITEMS.remove(item) # ITEMS 리스트에서 제거
