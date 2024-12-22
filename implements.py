@@ -33,10 +33,10 @@ class Block(Basic):
     def draw(self, surface) -> None:
         pygame.draw.rect(surface, self.color, self.rect)
     
-    def collide(self,ITEMS):
+    def collide(self, ITEMS, paddle, BALLS):
         self.alive = False
         center_x, center_y = self.rect.centerx, self.rect.centery  # 블록 중앙 좌표 저장
-        new_item = spawn_item(center_x, center_y) 
+        new_item = spawn_item(center_x, center_y, paddle, BALLS) 
         if new_item:
             ITEMS.append(new_item)
             #ITEMS.append(new_item)를 위해 매개변수로 ITEMS 추가
@@ -68,10 +68,10 @@ class Ball(Basic):
     def draw(self, surface):
         pygame.draw.ellipse(surface, self.color, self.rect)
 
-    def collide_block(self, blocks: list, items:list):
+    def collide_block(self, blocks: list, items:list, paddle : Paddle, BALLS):
         index = pygame.Rect.collidelist(self.rect,[Block.rect for Block in blocks])
         if(index >= 0):
-            blocks[index].collide(items)
+            blocks[index].collide(items, paddle, BALLS)
             self.Change_direct(blocks[index])
             blocks.remove(blocks[index]) #blocks 리스트에서 부딪힌 블록 삭제
 
@@ -153,20 +153,29 @@ class Item(Basic): # 아이템 객체 - Basic을 상속 받음
             self.rect.move_ip(0, self.speed)  # 아래로 떨어지도록
             self.center = (self.rect.centerx, self.rect.centery)
 
-    def collide_paddle(self, paddle): # paddle과 충돌했을 때
+    def collide_paddle(self, paddle, BALLS): # paddle과 충돌했을 때
         if self.active and self.rect.colliderect(paddle.rect):
             self.active = False
-            self.activate_item()
+            self.activate_item(paddle, BALLS)
 
     def activate_item(self): # 아이템 활성화 (paddle과 충돌 시)
         pass  
 
+class RedBall(Item): #Item class를 상속 받은 빨간 공 아이템 class
+    def __init__(self, pos: tuple):
+        super().__init__(pos)  
+        self.color = config.game_item_red  # 아이템 색 - 빨간색
 
-def spawn_item(center_x, center_y): # 아이템 생성
+    def activate_item(self, paddle : Paddle, BALLS):  # activate_item 오버라이딩
+        # 빨간색 공이 활성화되면 패들에서 새로운 공을 발사
+        new_ball = Ball(pos=(paddle.rect.centerx, paddle.rect.top))  # 패들 위치에서 공 생성
+        BALLS.append(new_ball)  # BALLS 리스트에 추가
+
+
+def spawn_item(center_x, center_y, paddle : Paddle, BALLS): # 아이템 생성
     if random.random() < 0.2: # 20%의 확률로 아이템 생성
-        # 기본 아이템(하얀색,효과x) 생성
-        item = Item(pos=(center_x, center_y)) # 중앙에서 생성
-        print("아이템 생성")
+        item = RedBall(pos=(center_x, center_y)) # 빨간색 공 아이템 생성
+        item.active = True  # 아이템 활성화
         return item
 
             
