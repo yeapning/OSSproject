@@ -139,7 +139,7 @@ class Ball(Basic):
 
 class Item(Basic): # 아이템 객체 - Basic을 상속 받음
     def __init__(self, pos:tuple):
-        self.color = config.game_item_color[2] # 기본 색 - 하얀색
+        self.color = config.game_item_basic # 기본 색 - 하얀색
         super().__init__(color=self.color, speed=5, pos=pos, size=config.item_size)
         # 기본 낙하 속도 설정  
         self.active = True
