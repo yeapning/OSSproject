@@ -33,10 +33,10 @@ class Block(Basic):
     def draw(self, surface) -> None:
         pygame.draw.rect(surface, self.color, self.rect)
     
-    def collide(self, ITEMS, paddle, BALLS): 
+    def collide(self, ITEMS): 
         self.alive = False
         center_x, center_y = self.rect.centerx, self.rect.centery  # 블록 중앙 좌표 저장
-        new_item = spawn_item(center_x, center_y, paddle, BALLS) 
+        new_item = spawn_item(center_x, center_y) 
         if new_item:
             ITEMS.append(new_item)
             #ITEMS.append(new_item)를 위해 매개변수로 ITEMS 추가
@@ -68,10 +68,10 @@ class Ball(Basic):
     def draw(self, surface):
         pygame.draw.ellipse(surface, self.color, self.rect)
 
-    def collide_block(self, blocks: list, items:list, paddle : Paddle, BALLS):
+    def collide_block(self, blocks: list, items:list):
         index = pygame.Rect.collidelist(self.rect,[Block.rect for Block in blocks])
         if(index >= 0):
-            blocks[index].collide(items, paddle, BALLS)
+            blocks[index].collide(items)
             self.Change_direct(blocks[index])
             blocks.remove(blocks[index]) #blocks 리스트에서 부딪힌 블록 삭제
 
@@ -172,7 +172,7 @@ class RedBall(Item): # Item을 상속 받은 빨간 공 아이템 class
         BALLS.append(new_ball)  # BALLS 리스트에 공 한 개 더 추가
 
 
-def spawn_item(center_x, center_y, paddle : Paddle, BALLS): # 아이템 생성
+def spawn_item(center_x, center_y): # 아이템 생성
     if random.random() < 0.2: # 20%의 확률로 아이템 생성
         item = RedBall(pos=(center_x, center_y)) # 빨간색 공 아이템 생성
         item.active = True 
